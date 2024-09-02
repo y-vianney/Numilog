@@ -101,3 +101,6 @@ if connect():
     perform_downloads()
 else:
     print("Failed to establish a session.")
+
+
+# edge webdriver link: https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/?form=MA13LH#downloads
