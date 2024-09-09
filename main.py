@@ -4,10 +4,13 @@ from selenium import webdriver
 from selenium.webdriver.edge.options import Options
 from selenium.webdriver.edge.service import Service
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException, TimeoutException, ElementClickInterceptedException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
+
 
 # Set the download directory
-download_dir = r"C:\Users\adjum\Documents\Python\Numilog\FICHIERS"
+DOWNLOAD_DIR = r"C:\Users\adjum\Documents\Python\Numilog\FICHIERS"
+DRIVER_PATH = r"C:\Users\PIGIERCI\Documents\Web Scraping\Drivers\edgedriver_win64\msedgedriver.exe"
+
 
 # Set up Edge options
 edge_options = Options()
@@ -16,16 +19,17 @@ edge_options.use_chromium = True
 edge_options.add_argument("--disable-gpu")
 
 prefs = {
-    "download.default_directory": download_dir,
+    "download.default_directory": DOWNLOAD_DIR,
     "download.prompt_for_download": False,
     "download.directory_upgrade": True,
 }
 edge_options.add_experimental_option("prefs", prefs)
 
 # Set up Edge WebDriver service
-service = Service(r"C:\Users\adjum\Downloads\edgedriver_win64\msedgedriver.exe")
+service = Service(DRIVER_PATH)
+s_service = Service(DRIVER_PATH)
 driver = webdriver.Edge(service=service, options=edge_options)
-s_driver = webdriver.Edge(service=service, options=edge_options)
+s_driver = webdriver.Edge(service=s_service, options=edge_options)
 session = requests.Session()
 
 
@@ -62,10 +66,11 @@ def perform_downloads():
                 try:
                     button.click()
                     time.sleep(1)  # Wait for the modal to appear
-                    driver.find_element(By.CLASS_NAME, "modal-dialogforCart").find_element(
-                        By.CSS_SELECTOR, "button[type=\"submit\"]").click()
-                except (NoSuchElementException, ElementClickInterceptedException):
-                    print("Error clicking the button or finding elements inside the modal.")
+                    close_modal = driver.find_element(By.CLASS_NAME, "modal-dialogforCart").find_element(
+                        By.CLASS_NAME, "modalClose")
+                    close_modal.click()
+                except (NoSuchElementException, ElementClickInterceptedException) as e:
+                    print("Error:", e.msg)
                     continue
 
             # Process the download page
